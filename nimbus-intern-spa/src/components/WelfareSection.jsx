@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useTheme } from '../context/ThemeContext';
+import Modal from './Modal';
 
 const Section = styled.section`
   min-height: 100vh;
@@ -110,6 +111,15 @@ const welfareData = [
 
 const WelfareSection = () => {
   const theme = useTheme();
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleCardClick = (item) => {
+    setSelectedItem(item);
+  };
+
+  const closeModal = () => {
+    setSelectedItem(null);
+  };
 
   return (
     <Section>
@@ -117,19 +127,22 @@ const WelfareSection = () => {
         <Title>복지 혜택</Title>
         <WelfareGrid>
           {welfareData.map(welfare => (
-            <WelfareCard key={welfare.id}>
+            <WelfareCard key={welfare.id} onClick={() => handleCardClick(welfare)}>
               <WelfareIcon>{welfare.icon}</WelfareIcon>
               <WelfareTitle>{welfare.title}</WelfareTitle>
               <WelfareDescription>{welfare.description}</WelfareDescription>
-              <WelfareDetails isExpanded={false}>
-                {welfare.details.split('\n').map((detail, index) => (
-                  <div key={index}>{detail}</div>
-                ))}
-              </WelfareDetails>
             </WelfareCard>
           ))}
         </WelfareGrid>
       </Container>
+      {/* 모달 조건부 렌더링 */}
+      {selectedItem && (
+        <Modal
+          title={selectedItem.title}
+          detail={selectedItem.details}
+          onClose={closeModal}
+        />
+      )}
     </Section>
   );
 };
